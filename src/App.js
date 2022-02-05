@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 import './App.css';
-
-import { useState, useEffect } from 'react';
 
 const getUserData = () => fetch('/user.json').then((resp) => resp.json());
 
@@ -9,7 +9,7 @@ const App = () => {
   const [roles, setRoles] = useState();
   const [roleList, setRoleList] = useState();
   useEffect(() => {
-    console.log("TCL: App -> name", name, roles)
+    console.log(`userEffect ${name} ${roles}`);
     if (name) {
       setRoleList(Object.keys(roles ?? {}).filter((k) => roles[k]));
     }
@@ -24,8 +24,10 @@ const App = () => {
   const onLoadUser = async () => {
     const data = await getUserData();
     console.log('TCL: onLoadUser -> data', data);
-    setName(data.name);
-    setRoles(data.roles);
+    unstable_batchedUpdates(() => {
+      setName(data.name);
+      setRoles(data.roles);
+    });
   };
   return (
     <div className="App">
